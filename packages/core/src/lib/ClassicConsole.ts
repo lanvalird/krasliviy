@@ -1,18 +1,9 @@
-import type { Any } from "src/types/index.js";
-
 import { Console as NativeConsole } from "node:console";
 
-import {
-  ANSI_COLOR_BG_CODE,
-  ANSI_COLOR_CODE,
-  ANSI_RESET,
-} from "./colors/index.js";
+import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "./colors/index.js";
 
 import { Console } from "./Console.js";
 import { StringBuilder } from "./utils/StringBuilder.js";
-
-type ColorLists = typeof ANSI_COLOR_BG_CODE | typeof ANSI_COLOR_CODE;
-type Colors = ColorLists[keyof ColorLists];
 
 /**
  * An implementation of the native console class that uses the ANSI
@@ -53,15 +44,6 @@ export class ClassicConsole extends NativeConsole {
     return this._console;
   }
 
-  protected colorize(str: string, ...colors: Colors[]): string {
-    const newString = new StringBuilder(str).appendEnd(ANSI_RESET);
-    colors.forEach((color) => {
-      newString.appendStart(color);
-    });
-
-    return newString.toString();
-  }
-
   protected mountIcon(
     str: string,
     icon: string,
@@ -73,26 +55,28 @@ export class ClassicConsole extends NativeConsole {
     return newString;
   }
 
-  override log(message?: Any, ...optionalParams: Any[]): void {
-    this.console.print(message, { classicParams: optionalParams });
+  override log(message?: unknown, ...optionalParams: unknown[]): void {
+    this.console.setClassicParams(optionalParams).print(message);
   }
 
-  override error(message?: Any, ...optionalParams: unknown[]): void {
+  override error(message?: unknown, ...optionalParams: unknown[]): void {
+    this.console.setClassicParams(optionalParams);
+
     if (!message) {
-      super.error(message, ...optionalParams);
+      this.console.print(message, {
+        logType: "ERROR",
+      });
       return;
     }
 
     let newMessage = message.toString();
-
-    const bgColor = ANSI_COLOR_BG_CODE.RED;
-    const textColor = ANSI_COLOR_CODE.WHITE;
-    newMessage = this.colorize(newMessage, bgColor, textColor);
-
-    const icon = ClassicConsole._icons["error"];
     const iconColor = ANSI_COLOR_CODE.RED;
-    newMessage = this.mountIcon(newMessage, this.colorize(icon, iconColor));
+    const iconValue = ClassicConsole._icons["error"];
+    const icon = new StringBuilder(iconValue).colorize(iconColor);
+    newMessage = this.mountIcon(newMessage, icon);
 
-    super.error(newMessage, ...optionalParams);
+    this.console.print(newMessage, {
+      logType: "ERROR",
+    });
   }
 }

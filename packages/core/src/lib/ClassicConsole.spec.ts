@@ -25,12 +25,12 @@ describe('ClassicConsole', () => {
     const createdSpy = vi.spyOn(ClassicConsole.prototype, 'error');
     
     const c = new ClassicConsole(process.stdout);
-    const testData = "Error method!";
+    const testData = ["%s method!", "Error"];
 
-    c.error(testData);
+    c.error(...testData);
 
     expect(createdSpy).toHaveBeenCalledOnce();
-    expect(createdSpy).toHaveBeenCalledWith(testData);
+    expect(createdSpy).toHaveBeenCalledWith(...testData);
     
     createdSpy.mockRestore();
   });
