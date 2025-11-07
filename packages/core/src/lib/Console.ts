@@ -1,6 +1,14 @@
 import { Console as NativeConsole } from "node:console";
 
-import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "./colors/index.js";
+import {
+  ANSI_COLOR_BG_CODE,
+  ANSI_COLOR_CODE,
+  ANSI_RESET,
+} from "./colors/index.js";
+import { StringBuilder } from "./utils/StringBuilder.js";
+
+type ColorLists = typeof ANSI_COLOR_BG_CODE | typeof ANSI_COLOR_CODE;
+type Colors = ColorLists[keyof ColorLists];
 
 export class Console extends NativeConsole {
   protected static _icons: { [key: string[1]]: string } = {
@@ -18,17 +26,40 @@ export class Console extends NativeConsole {
     super(stdout, stderr, ignoreErrors);
   }
 
-  override error(message?: string, ...optionalParams: unknown[]): void {
-    const color = `${ANSI_COLOR_BG_CODE.RED}${ANSI_COLOR_CODE.WHITE}`;
-    const icon = [
-      ANSI_COLOR_CODE.RED,
-      Console._icons["error"],
-      ANSI_COLOR_CODE.RESET,
-    ].join("");
+  protected colorize(str: string, color: Colors): string {
+    const newString = new StringBuilder(str)
+      .appendStart(color)
+      .appendEnd(ANSI_RESET)
+      .toString();
+    return newString;
+  }
 
-    super.error(
-      `${icon}${color} ${message} ${ANSI_COLOR_CODE.RESET}`,
-      ...optionalParams
+  protected mountIcon(
+    str: string,
+    icon: string,
+    position: "start" | "end" = "start"
+  ): string {
+    const newString = new StringBuilder(str)
+      .append(` ${icon} `, position)
+      .toString();
+    return newString;
+  }
+
+  override error(message?: string, ...optionalParams: unknown[]): void {
+    if (!message) {
+      super.error(message, ...optionalParams);
+      return;
+    }
+
+    message = this.colorize(
+      this.colorize(message, ANSI_COLOR_CODE.WHITE),
+      ANSI_COLOR_BG_CODE.RED
     );
+    message = this.mountIcon(
+      message,
+      this.colorize(Console._icons["error"], ANSI_COLOR_CODE.RED)
+    );
+
+    super.error(message, ...optionalParams);
   }
 }
