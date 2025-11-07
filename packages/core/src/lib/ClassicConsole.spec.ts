@@ -1,21 +1,17 @@
-import { Console } from './Console.js';
+import { ClassicConsole } from './ClassicConsole.js';
 import { Console as NativeConsole } from "node:console";
 
 
-describe('Console', () => {
-  it('object are instance of Console (local)', () => {
-  const c = new Console(process.stdout);
-    expect(c).toBeInstanceOf(Console);
-  })
+describe('ClassicConsole', () => {
   it('object are instance of Console (node)', () => {
-  const c = new Console(process.stdout);
+  const c = new ClassicConsole(process.stdout);
     expect(c).toBeInstanceOf(NativeConsole);
   })
 
   it('should call the log method with correct parameters', () => {
-    const createdSpy = vi.spyOn(Console.prototype, 'log');
+    const createdSpy = vi.spyOn(ClassicConsole.prototype, 'log');
     
-    const c = new Console(process.stdout);
+    const c = new ClassicConsole(process.stdout);
     const testData = "Log method!";
 
     c.log(testData);
@@ -26,9 +22,9 @@ describe('Console', () => {
     createdSpy.mockRestore();
   });
   it('should call the error method', () => {
-    const createdSpy = vi.spyOn(Console.prototype, 'error');
+    const createdSpy = vi.spyOn(ClassicConsole.prototype, 'error');
     
-    const c = new Console(process.stdout);
+    const c = new ClassicConsole(process.stdout);
     const testData = "Error method!";
 
     c.error(testData);

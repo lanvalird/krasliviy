@@ -1,3 +1,6 @@
+/**
+ * @since 0.0.1
+ */
 export class StringBuilder extends String {
   private _value: string;
 
