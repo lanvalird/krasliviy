@@ -1,4 +1,4 @@
-import { StringBuilder } from "./StringBuilder.js";
+import { StringBuilder } from "../../lib/utils/StringBuilder.js";
 
 describe('StringBuilder', () => {
   it('should create a StringBuilder instance', () => {

@@ -1,4 +1,4 @@
-import { ClassicConsole } from './ClassicConsole.js';
+import { ClassicConsole } from '../../lib/consoles/ClassicConsole.js';
 import { Console as NativeConsole } from "node:console";
 
 

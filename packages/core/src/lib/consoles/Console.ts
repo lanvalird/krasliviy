@@ -1,5 +1,5 @@
-import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "./colors/index.js";
-import { StringBuilder } from "./utils/StringBuilder.js";
+import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "../colors/index.js";
+import { StringBuilder } from "../utils/StringBuilder.js";
 
 type LogType = "LOG" | "INFO" | "WARN" | "ERROR";
 
@@ -15,6 +15,10 @@ export class Console {
     /* empty */
   }
 
+  /**
+   * Set a parameters (options) for classic/native JS-console. Also,
+   * it cleared via next call method `print()`.
+   */
   public setClassicParams(classicParams: unknown[]) {
     this._classicParams = classicParams;
     return this;
@@ -39,9 +43,17 @@ export class Console {
       return;
     }
 
-    switch (params.logType?.toUpperCase()) {
+    switch (params.logType.toUpperCase()) {
       case "LOG":
         console.log(...newParams);
+        break;
+
+      case "INFO":
+        console.info(...newParams);
+        break;
+
+      case "WARN":
+        console.warn(...newParams);
         break;
 
       case "ERROR":
@@ -54,15 +66,14 @@ export class Console {
   }
 
   public log(message: string) {
-    this.print(message, {logType: 'LOG'});
+    this.print(message, { logType: "LOG" });
   }
 
   public printError(message: string) {
     const bgColor = ANSI_COLOR_BG_CODE.RED;
     const textColor = ANSI_COLOR_CODE.WHITE;
-    const newMessage =
-    new StringBuilder(message) .colorize(bgColor, textColor);
+    const newMessage = new StringBuilder(message).colorize(bgColor, textColor);
 
-    this.print(newMessage, {logType: 'ERROR'});
+    this.print(newMessage, { logType: "ERROR" });
   }
 }

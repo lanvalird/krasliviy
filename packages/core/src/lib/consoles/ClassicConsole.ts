@@ -1,9 +1,9 @@
 import { Console as NativeConsole } from "node:console";
 
-import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "./colors/index.js";
+import { ANSI_COLOR_CODE } from "../colors/index.js";
 
 import { Console } from "./Console.js";
-import { StringBuilder } from "./utils/StringBuilder.js";
+import { StringBuilder } from "../utils/StringBuilder.js";
 
 /**
  * An implementation of the native console class that uses the ANSI
@@ -63,9 +63,8 @@ export class ClassicConsole extends NativeConsole {
     this.console.setClassicParams(optionalParams);
 
     if (!message) {
-      this.console.print(message, {
-        logType: "ERROR",
-      });
+      // null, undefined, unknown
+      this.console.print(message, { logType: "ERROR" });
       return;
     }
 
@@ -75,8 +74,6 @@ export class ClassicConsole extends NativeConsole {
     const icon = new StringBuilder(iconValue).colorize(iconColor);
     newMessage = this.mountIcon(newMessage, icon);
 
-    this.console.print(newMessage, {
-      logType: "ERROR",
-    });
+    this.console.print(newMessage, { logType: "ERROR" });
   }
 }
