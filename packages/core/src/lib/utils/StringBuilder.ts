@@ -8,7 +8,7 @@ type ColorLists = typeof ANSI_COLOR_BG_CODE | typeof ANSI_COLOR_CODE;
 type Colors = ColorLists[keyof ColorLists];
 
 /**
- * @since 0.0.1
+ * @since 0.0.2
  */
 export class StringBuilder extends String {
   private _value: string;
@@ -46,23 +46,23 @@ export class StringBuilder extends String {
    * Appends new substring to the start or end of a parent, and returns the StringBuilder
    * @param value New string to add to the string
    * @param rest Index of resting applied string
-   * 
+   *
    * @example
-   * new StringBuilder("Author: ").applyWithRest("Valentin Bird", [0, 1]).apply(".")
+   * const sb = new StringBuilder("Author: ").applyWithRest("Valentin Bird", [0, 1]).apply(".")
    * // --> "Author: V."
-   * new StringBuilder("Example with adding icon to the start").applyWithRest("!?", 1, "start")
-   * // --> "!Example with adding icon to the start" 
+   * sb.applyWithRest("!@#$%^&*()_+", [3, 4], "start");
+   * // --> "$Author: V."
    * new StringBuilder("My favorite animal: ").applyWithRest("Pseudocode №3 - cat", -3, "end")
    * // --> "My favorite animal: cat"
    */
   public applyWithRest(
     value: string,
     rest: number | [number, number],
-        position: "start" | "end" = "end"
+    position: "start" | "end" = "end"
   ): StringBuilder {
     const arrayed = Array.isArray(rest);
     const rested = arrayed ? value.slice(...rest) : value.slice(rest);
-this.apply(rested, position)
+    this.apply(rested, position);
 
     return this;
   }

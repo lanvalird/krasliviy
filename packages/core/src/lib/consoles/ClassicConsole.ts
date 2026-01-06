@@ -50,7 +50,7 @@ export class ClassicConsole extends NativeConsole {
     position: "start" | "end" = "start"
   ): string {
     const newString = new StringBuilder(str)
-      .apply(` ${icon} `, position)
+      .applyWithRest(icon, [0, 1], position)
       .toString();
     return newString;
   }
@@ -62,17 +62,16 @@ export class ClassicConsole extends NativeConsole {
   override error(message?: unknown, ...optionalParams: unknown[]): void {
     this.console.setClassicParams(optionalParams);
 
-    if (!message) {
-      // null, undefined, unknown
-      this.console.print(message, { logType: "ERROR" });
+    if (!message) {this.console.print(message, { logType: "ERROR" });
       return;
     }
 
     let newMessage = message.toString();
     const iconColor = ANSI_COLOR_CODE.RED;
     const iconValue = ClassicConsole._icons["error"];
-    const icon = new StringBuilder(iconValue).colorize(iconColor);
+    const icon = new StringBuilder(iconValue).toString();
     newMessage = this.mountIcon(newMessage, icon);
+    newMessage = new StringBuilder(newMessage).colorize(iconColor);
 
     this.console.print(newMessage, { logType: "ERROR" });
   }

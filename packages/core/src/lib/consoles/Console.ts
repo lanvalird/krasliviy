@@ -69,7 +69,7 @@ export class Console {
     this.print(message, { logType: "LOG" });
   }
 
-  public printError(message: string) {
+  public error(message: string) {
     const bgColor = ANSI_COLOR_BG_CODE.RED;
     const textColor = ANSI_COLOR_CODE.WHITE;
     const newMessage = new StringBuilder(message).colorize(bgColor, textColor);
