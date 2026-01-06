@@ -50,7 +50,7 @@ export class ClassicConsole extends NativeConsole {
     position: "start" | "end" = "start"
   ): string {
     const newString = new StringBuilder(str)
-      .append(` ${icon} `, position)
+      .apply(` ${icon} `, position)
       .toString();
     return newString;
   }
