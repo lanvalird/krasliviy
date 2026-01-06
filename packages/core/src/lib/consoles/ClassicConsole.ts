@@ -50,7 +50,8 @@ export class ClassicConsole extends NativeConsole {
     position: "start" | "end" = "start"
   ): string {
     const newString = new StringBuilder(str)
-      .applyWithRest(icon, [0, 1], position)
+      .apply(" ", position)
+      .applyWithRest(` ${icon}`, [0, 2], position)
       .toString();
     return newString;
   }
@@ -62,7 +63,8 @@ export class ClassicConsole extends NativeConsole {
   override error(message?: unknown, ...optionalParams: unknown[]): void {
     this.console.setClassicParams(optionalParams);
 
-    if (!message) {this.console.print(message, { logType: "ERROR" });
+    if (!message) {
+      this.console.print(message, { logType: "ERROR" });
       return;
     }
 
