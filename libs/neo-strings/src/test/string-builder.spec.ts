@@ -1,4 +1,4 @@
-import { StringBuilder } from "@krasliviy/neo-strings";
+import { StringBuilder } from "../lib/index.js";
 
 describe("StringBuilder", () => {
   it("should create a StringBuilder instance", () => {
