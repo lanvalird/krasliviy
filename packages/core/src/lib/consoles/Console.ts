@@ -1,6 +1,4 @@
 import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "../colors/index.js";
-import { StringBuilder } from "../utils/StringBuilder.js";
-
 type LogType = "LOG" | "INFO" | "WARN" | "ERROR";
 
 /**
@@ -72,7 +70,7 @@ export class Console {
   public error(message: string) {
     const bgColor = ANSI_COLOR_BG_CODE.RED;
     const textColor = ANSI_COLOR_CODE.WHITE;
-    const newMessage = new StringBuilder(message).colorize(bgColor, textColor);
+    const newMessage = colorize(message, bgColor, textColor);
 
     this.print(newMessage, { logType: "ERROR" });
   }

@@ -1,6 +1,7 @@
 {
-  "name": "@krasliviy/core",
+  "name": "@krasliviy/neo-strings",
   "version": "0.0.1",
+  "private": true,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,12 +15,8 @@
       "default": "./dist/index.js"
     }
   },
-  "files": [
-    "dist",
-    "!**/*.tsbuildinfo"
-  ],
   "nx": {
-    "sourceRoot": "packages/core/src",
+    "sourceRoot": "libs/neo-strings/src",
     "targets": {
       "build": {
         "executor": "@nx/js:swc",
@@ -27,17 +24,17 @@
           "{options.outputPath}"
         ],
         "options": {
-          "outputPath": "packages/core/dist",
-          "main": "packages/core/src/index.ts",
-          "tsConfig": "packages/core/tsconfig.lib.json",
+          "outputPath": "libs/neo-strings/dist",
+          "main": "libs/neo-strings/src/index.ts",
+          "tsConfig": "libs/neo-strings/tsconfig.lib.json",
           "skipTypeCheck": true,
           "stripLeadingPaths": true
         }
       }
     }
   },
+  "peerDependencies": {},
   "dependencies": {
-    "@swc/helpers": "~0.5.11",
-    "@krasliviy/neo-strings": "0.0.1"
+    "@swc/helpers": "~0.5.11"
   }
 }

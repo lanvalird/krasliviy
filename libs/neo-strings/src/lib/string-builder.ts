@@ -1,12 +1,3 @@
-import {
-  ANSI_COLOR_BG_CODE,
-  ANSI_COLOR_CODE,
-  ANSI_RESET,
-} from "../colors/index.js";
-
-type ColorLists = typeof ANSI_COLOR_BG_CODE | typeof ANSI_COLOR_CODE;
-type Colors = ColorLists[keyof ColorLists];
-
 /**
  * @since 0.0.2
  */
@@ -23,6 +14,13 @@ export class StringBuilder extends String {
   }
   public set value(value: string) {
     this._value = value;
+  }
+
+  /**
+   * Returns a builded string.
+   */
+  public build(): string {
+    return this.toString();
   }
 
   /**
@@ -97,15 +95,6 @@ export class StringBuilder extends String {
       this.value = this.value + items;
     }
     return this;
-  }
-
-  public colorize(...colors: Colors[]): string {
-    const newString = this.push(ANSI_RESET);
-    colors.forEach((color) => {
-      newString.unshift(color);
-    });
-
-    return newString.toString();
   }
 
   public override toString(): string {
