@@ -2,7 +2,7 @@ import { Console as NativeConsole } from "node:console";
 
 import { ANSI_COLOR_CODE } from "../colors/index.js";
 
-import { Console } from "./Console.js";
+import { Console } from "./console.js";
 import { StringBuilder } from "@krasliviy/neo-strings";
 
 import { colorize } from "../utils/colorize.js";

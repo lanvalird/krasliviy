@@ -1,3 +1,3 @@
-export * from "./Console.js";
+export * from "./console.js";
 
-export * from "./ClassicConsole.js";
+export * from "./classic-console.js";
