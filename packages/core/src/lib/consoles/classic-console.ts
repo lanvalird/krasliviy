@@ -2,7 +2,7 @@ import { Console as NativeConsole } from "node:console";
 
 import { ANSI_COLOR_CODE } from "../colors/index.js";
 
-import { Console } from "./console.js";
+import { Console, LogLevel } from "./console.js";
 import { StringBuilder } from "@krasliviy/neo-strings";
 
 import { colorize } from "../utils/colorize.js";
@@ -58,15 +58,18 @@ export class ClassicConsole extends NativeConsole {
     return newString;
   }
 
-  override log(message?: unknown, ...optionalParams: unknown[]): void {
-    this.console.setClassicParams(optionalParams).print(message);
+  override log(message?: unknown, ...classicParams: unknown[]): void {
+    this.console.print(message, { classicParams: classicParams });
   }
 
-  override error(message?: unknown, ...optionalParams: unknown[]): void {
-    this.console.setClassicParams(optionalParams);
+  override error(message?: unknown, ...classicParams: unknown[]): void {
+    const params = {
+      classicParams,
+      logLevel: LogLevel.Error,
+    };
 
     if (!message) {
-      this.console.print(message, { logType: "ERROR" });
+      this.console.print(message, params);
       return;
     }
 
@@ -77,6 +80,6 @@ export class ClassicConsole extends NativeConsole {
     newMessage = this.mountIcon(newMessage, icon);
     newMessage = colorize(newMessage, iconColor);
 
-    this.console.print(newMessage, { logType: "ERROR" });
+    this.console.print(newMessage, params);
   }
 }

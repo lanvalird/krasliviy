@@ -1,5 +1,21 @@
+import type { Nothing, NotImplemented, Simple } from "src/types/utils.js";
+
 import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "../colors/index.js";
-type LogType = "LOG" | "INFO" | "WARN" | "ERROR";
+import { colorize } from "../utils/colorize.js";
+
+export const enum LogLevel {
+  Log,
+  Info,
+  Warn,
+  Error,
+}
+
+type ConsoleMessage = Simple | Array<Simple> | Nothing | unknown;
+type ConsoleParameters = Partial<{
+  classicParams: unknown[];
+  logLevel: LogLevel;
+  logPriority: NotImplemented;
+}>;
 
 /**
  * The main class in this package.
@@ -7,71 +23,44 @@ type LogType = "LOG" | "INFO" | "WARN" | "ERROR";
  * @since 0.0.1
  */
 export class Console {
-  private _classicParams: unknown[] = [];
-
   constructor() {
     /* empty */
   }
 
-  /**
-   * Set a parameters (options) for classic/native JS-console. Also,
-   * it cleared via next call method `print()`.
-   */
-  public setClassicParams(classicParams: unknown[]) {
-    this._classicParams = classicParams;
-    return this;
-  }
-  public clearClassicParams() {
-    this._classicParams = [];
-    return this;
-  }
-
   public print(
-    message: unknown,
-    params?: Partial<{
-      logType: LogType;
-    }>
+    message: ConsoleMessage,
+    params: ConsoleParameters = { logLevel: LogLevel.Log }
   ) {
-    const classicParams = this._classicParams;
-    const newParams = [message, ...classicParams];
-    this.clearClassicParams();
+    const { classicParams, logLevel /* logPriority */ } = params;
 
-    if (!params || !params.logType) {
-      console.log(...newParams);
-      return;
-    }
+    const newParams = [message, ...(classicParams ?? [])];
 
-    switch (params.logType.toUpperCase()) {
-      case "LOG":
+    switch (logLevel) {
+      case LogLevel.Log:
         console.log(...newParams);
         break;
 
-      case "INFO":
+      case LogLevel.Info:
         console.info(...newParams);
         break;
 
-      case "WARN":
+      case LogLevel.Warn:
         console.warn(...newParams);
         break;
 
-      case "ERROR":
-        console.error(...newParams);
+      case LogLevel.Error:
+        console.error(
+          colorize(
+            message as string,
+            ANSI_COLOR_BG_CODE.RED,
+            ANSI_COLOR_CODE.WHITE
+          ),
+          ...newParams
+        );
         break;
 
       default:
         throw "What? How you breack it?!";
     }
-  }
-
-  public log(message: string) {
-    this.print(message, { logType: "LOG" });
-  }
-
-  public error(message: string) {
-    const bgColor = ANSI_COLOR_BG_CODE.RED;
-    const textColor = ANSI_COLOR_CODE.WHITE;
-    const newMessage = colorize(message, bgColor, textColor);
-
-    this.print(newMessage, { logType: "ERROR" });
   }
 }
