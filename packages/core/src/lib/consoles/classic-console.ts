@@ -1,11 +1,7 @@
 import { Console as NativeConsole } from "node:console";
 
-import { ANSI_COLOR_CODE } from "../colors/index.js";
-
-import { Console, LogLevel } from "./console.js";
 import { StringBuilder } from "@krasliviy/neo-strings";
-
-import { colorize } from "../utils/colorize.js";
+import { Console, LogLevel } from "./console.js";
 
 /**
  * An implementation of the native console class that uses the ANSI
@@ -16,12 +12,12 @@ import { colorize } from "../utils/colorize.js";
  * @since 0.0.1
  */
 export class ClassicConsole extends NativeConsole {
-  protected static _icons: { [key: string[1]]: string } = {
-    log: "",
-    info: "?",
-    warn: "!",
-    error: "x",
-  };
+  protected static _defaultIcons = {
+    log: " ",
+    info: "*",
+    warn: "¤",
+    error: "^",
+  } as const;
 
   private _console: Console;
 
@@ -46,20 +42,21 @@ export class ClassicConsole extends NativeConsole {
     return this._console;
   }
 
-  protected mountIcon(
-    str: string,
-    icon: string,
-    position: "start" | "end" = "start"
-  ): string {
-    const newString = new StringBuilder(str)
-      .apply(" ", position)
-      .applyWithRest(` ${icon}`, [0, 2], position)
-      .toString();
-    return newString;
+  protected iconize(str: string): string {
+    return new StringBuilder(" ").applyWithRest(str, [0, 1]).apply(" ").build();
+  }
+
+  protected applyIcon(message: unknown, icon: string) {
+    return new StringBuilder(String(message))
+      .apply(this.iconize(icon), "start")
+      .build();
   }
 
   override log(message?: unknown, ...classicParams: unknown[]): void {
-    this.console.print(message, { classicParams: classicParams });
+    this.console.print(
+      this.applyIcon(message, ClassicConsole._defaultIcons.log),
+      { classicParams: classicParams }
+    );
   }
 
   override error(message?: unknown, ...classicParams: unknown[]): void {
@@ -68,18 +65,9 @@ export class ClassicConsole extends NativeConsole {
       logLevel: LogLevel.Error,
     };
 
-    if (!message) {
-      this.console.print(message, params);
-      return;
-    }
-
-    let newMessage = message.toString();
-    const iconColor = ANSI_COLOR_CODE.RED;
-    const iconValue = ClassicConsole._icons["error"];
-    const icon = new StringBuilder(iconValue).toString();
-    newMessage = this.mountIcon(newMessage, icon);
-    newMessage = colorize(newMessage, iconColor);
-
-    this.console.print(newMessage, params);
+    this.console.print(
+      this.applyIcon(message, this.iconize(ClassicConsole._defaultIcons.error)),
+      params
+    );
   }
 }

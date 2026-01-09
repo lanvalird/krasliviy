@@ -1,7 +1,10 @@
 import type { Nothing, NotImplemented, Simple } from "src/types/utils.js";
 
-import { ANSI_COLOR_BG_CODE, ANSI_COLOR_CODE } from "../colors/index.js";
-import { colorize } from "../utils/colorize.js";
+import {
+  ANSI_COLOR_BG_CODE,
+  ANSI_COLOR_CODE,
+  ANSI_RESET,
+} from "../colors/index.js";
 
 export const enum LogLevel {
   Log,
@@ -11,56 +14,43 @@ export const enum LogLevel {
 }
 
 type ConsoleMessage = Simple | Array<Simple> | Nothing | unknown;
-type ConsoleParameters = Partial<{
-  classicParams: unknown[];
-  logLevel: LogLevel;
-  logPriority: NotImplemented;
-}>;
 
-/**
- * The main class in this package.
- *
- * @since 0.0.1
- */
+interface ConsoleParameters {
+  classicParams?: unknown[];
+  logLevel?: LogLevel;
+  logPriority?: NotImplemented;
+}
+
 export class Console {
   constructor() {
     /* empty */
   }
 
-  public print(
-    message: ConsoleMessage,
-    params: ConsoleParameters = { logLevel: LogLevel.Log }
-  ) {
-    const { classicParams, logLevel /* logPriority */ } = params;
-
-    const newParams = [message, ...(classicParams ?? [])];
+  public print(message: ConsoleMessage, params: ConsoleParameters = {}) {
+    const { classicParams = [], logLevel = LogLevel.Log } = params;
 
     switch (logLevel) {
       case LogLevel.Log:
-        console.log(...newParams);
+        console.log(message, ...classicParams);
         break;
 
       case LogLevel.Info:
-        console.info(...newParams);
+        console.info(message, ...classicParams);
         break;
 
       case LogLevel.Warn:
-        console.warn(...newParams);
+        console.warn(message, ...classicParams);
         break;
 
       case LogLevel.Error:
         console.error(
-          colorize(
-            message as string,
-            ANSI_COLOR_BG_CODE.RED,
-            ANSI_COLOR_CODE.WHITE
-          ),
-          ...newParams
+          ANSI_COLOR_BG_CODE.RED +
+            ANSI_COLOR_CODE.WHITE +
+            String(message) +
+            ANSI_RESET,
+          ...classicParams
         );
         break;
-
-      default:
-        throw "What? How you breack it?!";
     }
   }
 }
